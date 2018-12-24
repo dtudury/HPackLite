@@ -28,6 +28,7 @@ module.exports = function (config) {
       'src/**/*.js': ['webpack'],
       'test/**/*.js': ['webpack']
     },
+
     webpack: {
       mode: 'development',
       module: {
@@ -41,15 +42,16 @@ module.exports = function (config) {
         ]
       }
     },
-    coverageIstanbulReporter: {
-      reports: ['html', 'text-summary'],
-      fixWebpackSourcePaths: true
-    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['progress', 'coverage-istanbul'],
+
+    coverageIstanbulReporter: {
+      reports: ['html', 'text-summary'],
+      fixWebpackSourcePaths: true
+    },
 
     // web server port
     port: 9876,
