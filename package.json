@@ -1,0 +1,30 @@
+{
+  "name": "hpacklite",
+  "version": "0.0.0",
+  "description": "HPack in browser streams",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dtudury/HPackLite.git"
+  },
+  "author": "David Tudury <david.tudury@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/dtudury/HPackLite/issues"
+  },
+  "homepage": "https://github.com/dtudury/HPackLite#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "karma": "^3.1.4",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-mocha": "^1.3.0",
+    "karma-webpack": "^3.0.5",
+    "mocha": "^5.2.0",
+    "webpack": "^4.28.2"
+  }
+}
