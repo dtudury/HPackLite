@@ -4,7 +4,8 @@
   "description": "HPack in browser streams",
   "main": "index.js",
   "scripts": {
-    "test": "karma start",
+    "start": "karma start",
+    "test": "karma start --single-run",
     "lint": "standard"
   },
   "repository": {

@@ -63,6 +63,11 @@ describe('HPackLite.utils', () => {
       const encoded = encodeStringLiteral(false, a)
       const decoded = decodeStringLiteral(encoded)
       expect(a).to.deep.equal(decoded.stringLiteral)
+      expect(decoded.isHuffmanEncoded).to.equal(false)
+      const encodedHuffman = encodeStringLiteral(true, a)
+      const decodedHuffman = decodeStringLiteral(encodedHuffman)
+      expect(a).to.deep.equal(decodedHuffman.stringLiteral)
+      expect(decodedHuffman.isHuffmanEncoded).to.equal(true)
     })
   })
   describe('encode/decode Header', () => {
