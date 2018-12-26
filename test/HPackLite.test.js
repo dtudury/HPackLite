@@ -1,6 +1,6 @@
 /* globals describe it */
 const { decodeInteger, encodeInteger, decodeHuffman, encodeHuffman, decodeStringLiteral, encodeStringLiteral, decodeHeader, encodeHeader } = require('../src/utils/index')
-const { INCREMENTAL } = require('../src/constants')
+const { INDEXED, INCREMENTAL, SIZE_UPDATE, NOT_INDEXED, NEVER_INDEXED } = require('../src/constants')
 const { Buffer } = require('buffer')
 const { expect } = require('chai')
 describe('HPackLite.utils', () => {
@@ -41,6 +41,9 @@ describe('HPackLite.utils', () => {
     it('writes smallish integers on octet boundaries', () => {
       expect(encodeInteger(0x0, 0, 42)).to.deep.equal(Buffer.from([0x2a]))
     })
+    it('throws when you pass it an integer bigger than it\'s mask', () => {
+      expect(() => encodeInteger(0xff, 3, 0)).to.throw()
+    })
   })
   describe('encode/decode huffman', () => {
     it('decodes strings it encodes', () => {
@@ -51,10 +54,13 @@ describe('HPackLite.utils', () => {
       for (let i = 0; i < 10000; i++) {
         bytes.push(Math.floor(Math.random() * 256))
       }
-      const buffer = Buffer.from(bytes)
-      const encoded = encodeHuffman(buffer)
-      const decoded = decodeHuffman(encoded)
-      expect(decoded).to.deep.equal(buffer)
+      for (let i = 0; i < 8; i++) {
+        bytes.push(Math.floor(Math.random() * 256))
+        const buffer = Buffer.from(bytes)
+        const encoded = encodeHuffman(buffer)
+        const decoded = decodeHuffman(encoded)
+        expect(decoded).to.deep.equal(buffer)
+      }
     })
   })
   describe('encode/decode StringLiteral', () => {
@@ -71,15 +77,54 @@ describe('HPackLite.utils', () => {
     })
   })
   describe('encode/decode Header', () => {
-    it('decodes strings it encodes', () => {
-      const name = Buffer.from('name', 'utf8')
-      const encodedName = encodeStringLiteral(false, name)
-      const value = Buffer.from('value', 'utf8')
-      const encodedValue = encodeStringLiteral(false, value)
+    const name = Buffer.from('name', 'utf8')
+    const value = Buffer.from('value', 'utf8')
+    const encodedName = encodeStringLiteral(false, name)
+    const encodedValue = encodeStringLiteral(false, value)
+    it('decodes indexed headers', () => {
+      const encodedHeader = encodeHeader(INDEXED, 7)
+      const decodedHeader = decodeHeader(encodedHeader)
+      expect(decodedHeader.index).to.deep.equal(7)
+      expect(decodedHeader.kind).to.deep.equal(INDEXED)
+    })
+    it('decodes incremental name/value pairs it encodes', () => {
       const encodedHeader = encodeHeader(INCREMENTAL, 0, encodedName, encodedValue)
       const decodedHeader = decodeHeader(encodedHeader)
       expect(decodedHeader.name.stringLiteral).to.deep.equal(name)
       expect(decodedHeader.value.stringLiteral).to.deep.equal(value)
+      expect(decodedHeader.kind).to.deep.equal(INCREMENTAL)
+    })
+    it('decodes incremental indexed name/vale pairs it encodes', () => {
+      const encodedHeader = encodeHeader(INCREMENTAL, 7, encodedValue)
+      const decodedHeader = decodeHeader(encodedHeader)
+      console.log(decodedHeader)
+      expect(decodedHeader.index).to.deep.equal(7)
+      expect(decodedHeader.name).to.equal(undefined)
+      expect(decodedHeader.value.stringLiteral).to.deep.equal(value)
+      expect(decodedHeader.kind).to.deep.equal(INCREMENTAL)
+    })
+    it('decodes never indexed name/value pairs it encodes', () => {
+      const encodedHeader = encodeHeader(NEVER_INDEXED, 0, encodedName, encodedValue)
+      const decodedHeader = decodeHeader(encodedHeader)
+      expect(decodedHeader.name.stringLiteral).to.deep.equal(name)
+      expect(decodedHeader.value.stringLiteral).to.deep.equal(value)
+      expect(decodedHeader.kind).to.deep.equal(NEVER_INDEXED)
+    })
+    it('decodes not indexed name/value pairs it encodes', () => {
+      const encodedHeader = encodeHeader(NOT_INDEXED, 0, encodedName, encodedValue)
+      const decodedHeader = decodeHeader(encodedHeader)
+      expect(decodedHeader.name.stringLiteral).to.deep.equal(name)
+      expect(decodedHeader.value.stringLiteral).to.deep.equal(value)
+      expect(decodedHeader.kind).to.deep.equal(NOT_INDEXED)
+    })
+    it('decodes size update headers', () => {
+      const encodedHeader = encodeHeader(SIZE_UPDATE, 7)
+      const decodedHeader = decodeHeader(encodedHeader)
+      expect(decodedHeader.maxSize).to.deep.equal(7)
+      expect(decodedHeader.kind).to.deep.equal(SIZE_UPDATE)
+    })
+    it('throws on unknown header kinds', () => {
+      expect(() => encodeHeader(1)).to.throw()
     })
   })
 })
