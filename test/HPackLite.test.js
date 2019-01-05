@@ -1,6 +1,6 @@
 /* globals describe it */
-const { decodeInteger, encodeInteger, decodeHuffman, encodeHuffman, decodeStringLiteral, encodeStringLiteral, decodeHeader, encodeHeader } = require('../src/utils/index')
-const { INDEXED, INCREMENTAL, SIZE_UPDATE, NOT_INDEXED, NEVER_INDEXED } = require('../src/constants')
+const { decodeInteger, encodeInteger, decodeHuffman, encodeHuffman, decodeStringLiteral, encodeStringLiteral, decodeHeader, encodeHeader } = require('../lib/utils/index')
+const { INDEXED, INCREMENTAL, SIZE_UPDATE, NOT_INDEXED, NEVER_INDEXED } = require('../lib/constants')
 const { Buffer } = require('buffer')
 const { expect } = require('chai')
 describe('HPackLite.utils', () => {

@@ -14,7 +14,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/**/*.js',
+      'lib/**/*.js',
       'test/**/*.js'
     ],
 
@@ -25,7 +25,7 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'src/**/*.js': ['webpack'],
+      'lib/**/*.js': ['webpack'],
       'test/**/*.js': ['webpack']
     },
 
@@ -37,7 +37,7 @@ module.exports = function (config) {
           {
             test: /\.js$/,
             use: { loader: 'istanbul-instrumenter-loader' },
-            include: path.resolve('src/')
+            include: path.resolve('lib/')
           }
         ]
       }

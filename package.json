@@ -1,6 +1,6 @@
 {
   "name": "hpacklite",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "HPack in browser streams",
   "main": "index.js",
   "scripts": {
